@@ -15,7 +15,10 @@ export interface Book {
 export interface BookSummary {
   id: string;
   name: string;
+  isbn: string;
   authors: string[];
+  numberOfPages: number;
   released: string;
   characterCount: number;
+  characterUrls: string[];
 }

@@ -8,11 +8,12 @@ import { Book, BookSummary } from '../../interfaces/book.interfaces';
 import { Character } from '../../interfaces/character.interfaces';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
 import { SearchBarComponent } from '../../components/search-bar/search-bar';
+import { BookCardComponent } from '../../components/book-card/book-card';
 
 @Component({
   selector: 'app-books-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, LoadingSpinnerComponent, SearchBarComponent],
+  imports: [CommonModule, RouterModule, LoadingSpinnerComponent, SearchBarComponent, BookCardComponent],
   templateUrl: './books.html'
 })
 export class BooksPageComponent implements OnInit {
@@ -81,25 +82,4 @@ export class BooksPageComponent implements OnInit {
     this.filteredBooks.set(filtered);
   }
 
-  getCharactersInBook(book: Book): Character[] {
-    if (!book.characters || book.characters.length === 0) {
-      return [];
-    }
-
-    return this.characters().filter(character =>
-      book.characters?.includes(character.url)
-    ).slice(0, 5); // Mostrar solo los primeros 5 personajes
-  }
-
-  getCharacterCount(book: Book): number {
-    return book.characters?.length || 0;
-  }
-
-  formatDate(dateString: string): string {
-    return BookMapper.formatReleased(dateString);
-  }
-
-  formatPages(pages: number): string {
-    return BookMapper.formatNumberOfPages(pages);
-  }
 }

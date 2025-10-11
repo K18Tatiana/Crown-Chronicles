@@ -154,9 +154,12 @@ export class BookService {
     return books.map(book => ({
       id: this.extractIdFromUrl(book.url),
       name: book.name || 'Libro Desconocido',
+      isbn: book.isbn || 'ISBN Desconocido',
       authors: book.authors || ['Autor Desconocido'],
+      numberOfPages: book.numberOfPages || 0,
       released: book.released || 'Fecha Desconocida',
-      characterCount: (book.characters?.length || 0) + (book.povCharacters?.length || 0)
+      characterCount: (book.characters?.length || 0) + (book.povCharacters?.length || 0),
+      characterUrls: [...(book.characters || []), ...(book.povCharacters || [])]
     }));
   }
 
