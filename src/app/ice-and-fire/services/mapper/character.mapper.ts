@@ -4,7 +4,7 @@ export class CharacterMapper {
   static toCharacterSummary(character: Character): CharacterSummary {
     return {
       id: this.extractIdFromUrl(character.url),
-      name: character.name || 'Personaje Desconocido',
+      name: this.formatName(character.name, character.aliases),
       gender: character.gender || 'Desconocido',
       culture: character.culture || 'Desconocido',
       titles: character.titles || [],
@@ -49,8 +49,12 @@ export class CharacterMapper {
     return family;
   }
 
-  static formatName(name: string): string {
+  static formatName(name: string, aliases?: string[]): string {
     if (!name || name === '') {
+      // Si no hay nombre, usar el primer alias si existe
+      if (aliases && aliases.length > 0 && aliases[0]) {
+        return aliases[0];
+      }
       return 'Personaje Desconocido';
     }
     return name;
