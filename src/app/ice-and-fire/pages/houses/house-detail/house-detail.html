@@ -1,0 +1,221 @@
+<div class="space-y-6">
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <app-loading-spinner
+      size="lg"
+      message="Cargando detalles de la casa..."
+    />
+  }
+
+  <!-- Error State -->
+  @if (error() && !isLoading()) {
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+      <div class="text-red-600 dark:text-red-400 mb-4">
+        <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-red-900 dark:text-red-300 mb-2">
+        {{ error() }}
+      </h3>
+      <button
+        (click)="loadHouse(route.snapshot.params['id'])"
+        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+      >
+        Intentar de Nuevo
+      </button>
+    </div>
+  }
+
+  <!-- House Details -->
+  @if (house() && !isLoading()) {
+    <div class="space-y-8">
+      <!-- House Header -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+          <!-- House Emblem/Info -->
+          <div class="flex-1">
+            <div class="flex items-start justify-between mb-6">
+              <div>
+                <h1 class="text-4xl font-got font-bold text-gray-900 dark:text-white mb-4">
+                  {{ house()!.name }}
+                </h1>
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                    {{ house()!.region || 'Región Desconocida' }}
+                  </span>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                    {{ getHouseStatus(house()!) }}
+                  </span>
+                </div>
+              </div>
+              <app-favorite-button
+                [isFavorite]="isFavorite()"
+                (toggle)="toggleFavorite()"
+                size="lg"
+              />
+            </div>
+
+            <!-- House Words -->
+            @if (house()!.words && house()!.words !== '') {
+              <blockquote class="border-l-4 border-got-red pl-6 mb-6">
+                <p class="text-xl italic text-gray-700 dark:text-gray-300 font-got">
+                  "{{ house()!.words }}"
+                </p>
+                <footer class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Lema de la Casa
+                </footer>
+              </blockquote>
+            }
+
+            <!-- Coat of Arms -->
+            @if (house()!.coatOfArms && house()!.coatOfArms !== '') {
+              <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Escudo de Armas
+                </h3>
+                <p class="text-gray-700 dark:text-gray-300 italic">
+                  {{ house()!.coatOfArms }}
+                </p>
+              </div>
+            }
+          </div>
+
+          <!-- House Stats -->
+          <div class="lg:w-80">
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Información de la Casa
+              </h3>
+              <dl class="space-y-3">
+                <div>
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Fundada</dt>
+                  <dd class="text-sm text-gray-900 dark:text-white">{{ formatFounded(house()!.founded) }}</dd>
+                </div>
+                @if (house()!.founder && house()!.founder !== '') {
+                  <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Fundador</dt>
+                    <dd class="text-sm text-gray-900 dark:text-white">
+                      @if (founder()) {
+                        {{ founder()!.name || 'Nombre desconocido' }}
+                        <a [routerLink]="['/characters', house()!.founder.split('/').pop()]"
+                          class="text-got-red hover:underline ml-2">
+                          (Ver detalles)
+                        </a>
+                      } @else {
+                        <a [routerLink]="['/characters', house()!.founder.split('/').pop()]"
+                          class="text-got-red hover:underline">
+                          Ver Fundador
+                        </a>
+                      }
+                    </dd>
+                  </div>
+                }
+                <div>
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Miembros</dt>
+                  <dd class="text-sm text-gray-900 dark:text-white">{{ houseMembers().length }} registrados</dd>
+                </div>
+                @if (house()!.seats && house()!.seats.length > 0) {
+                  <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Asientos</dt>
+                    <dd class="text-sm text-gray-900 dark:text-white">
+                      @for (seat of house()!.seats; track seat) {
+                        <div>{{ seat }}</div>
+                      }
+                    </dd>
+                  </div>
+                }
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Titles and Ancestral Weapons -->
+      @if (house()!.titles && house()!.titles.length > 0 || house()!.ancestralWeapons && house()!.ancestralWeapons.length > 0) {
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Titles -->
+          @if (house()!.titles && house()!.titles.length > 0) {
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <h3 class="text-xl font-got font-bold text-gray-900 dark:text-white mb-4">
+                Títulos
+              </h3>
+              <ul class="space-y-2">
+                @for (title of house()!.titles; track title) {
+                  @if (title && title !== '') {
+                    <li class="flex items-center text-gray-700 dark:text-gray-300">
+                      <span class="w-2 h-2 bg-got-red rounded-full mr-3"></span>
+                      {{ title }}
+                    </li>
+                  }
+                }
+              </ul>
+            </div>
+          }
+
+        </div>
+      }
+
+      <!-- House Members -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h3 class="text-xl font-got font-bold text-gray-900 dark:text-white mb-6">
+          Vasallos
+        </h3>
+
+        @if (houseMembers().length === 0) {
+          <div class="text-center py-8">
+            <div class="text-gray-400 text-4xl mb-4">👥</div>
+            <p class="text-gray-600 dark:text-gray-400">
+              No hay vasallos registrados para esta casa
+            </p>
+          </div>
+        } @else {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (member of houseMembers(); track member.url) {
+              <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 h-full flex flex-col">
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">
+                  {{ formatCharacterName(member.name) }}
+                </h4>
+                <div class="space-y-1 text-sm text-gray-600 dark:text-gray-400 flex-1">
+                  @if (member.gender && member.gender !== '') {
+                    <div>
+                      <span class="font-medium">Género:</span> {{ member.gender }}
+                    </div>
+                  }
+                  @if (member.culture && member.culture !== '') {
+                    <div>
+                      <span class="font-medium">Cultura:</span> {{ member.culture }}
+                    </div>
+                  }
+                  @if (member.titles && member.titles.length > 0) {
+                    <div>
+                      <span class="font-medium">Títulos:</span> {{ member.titles.join(', ') }}
+                    </div>
+                  }
+                </div>
+                <div class="mt-auto pt-3">
+                  <a
+                    [routerLink]="['/characters', member.url.split('/').pop()]"
+                    class="text-sm text-got-red hover:text-red-800 transition-colors duration-200"
+                  >
+                    Ver Detalles →
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex justify-between">
+        <a
+          routerLink="/houses"
+          class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200"
+        >
+          ← Volver a Casas
+        </a>
+      </div>
+    </div>
+  }
+</div>

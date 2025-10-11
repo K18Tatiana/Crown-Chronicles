@@ -1,0 +1,12 @@
+<button
+  (click)="onToggle()"
+  [class]="buttonClass"
+  [title]="isFavorite() ? 'Eliminar de favoritos' : 'Agregar a favoritos'"
+  [disabled]="disabled()"
+>
+  @if (isFavorite()) {
+    <span class="text-yellow-500" [class]="sizeClass">⭐</span>
+  } @else {
+    <span class="text-gray-400 hover:text-yellow-500 transition-colors duration-200" [class]="sizeClass">☆</span>
+  }
+</button>

@@ -1,0 +1,40 @@
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden character-card h-full flex flex-col">
+  <!-- Character Header -->
+  <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex items-start justify-between">
+      <div class="flex-1">
+        <h3 class="text-lg font-got font-bold text-gray-900 dark:text-white mb-2">
+          {{ character().name }}
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+          {{ character().gender }}
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          {{ character().culture }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Details -->
+  <div class="p-6 flex-1 flex flex-col">
+    <div class="space-y-3">
+      @if (character().titles && character().titles.length > 0) {
+        <div class="text-sm text-gray-600 dark:text-gray-400">
+          <span class="font-medium">Títulos:</span>
+          <p class="mt-1">{{ character().titles.join(', ') }}</p>
+        </div>
+      }
+    </div>
+
+    <!-- Action Button -->
+    <div class="mt-auto pt-6">
+      <a
+        [routerLink]="getDetailRoute()"
+        class="block w-full text-center px-4 py-2 bg-got-red text-white rounded-lg hover:bg-red-800 transition-colors duration-200"
+      >
+        Ver Detalles
+      </a>
+    </div>
+  </div>
+</div>

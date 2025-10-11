@@ -1,0 +1,79 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-got font-bold text-gray-900 dark:text-white mb-4">
+      Personajes de Westeros
+    </h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+      Descubre los nobles señores, damas, caballeros y gente común que moldean el reino
+    </p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="max-w-md mx-auto">
+    <app-search-bar
+      placeholder="Buscar personajes..."
+      [value]="searchQuery()"
+      [disabled]="isLoading()"
+      (searchChange)="onSearchChange($event)"
+    />
+  </div>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-red-700 dark:text-red-300">{{ error() }}</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading() && characters().length === 0) {
+    <app-loading-spinner
+      size="lg"
+      message="Cargando personajes..."
+    />
+  }
+
+  <!-- Characters Grid -->
+  @if (!isLoading() || characters().length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4 pt-4">
+      @for (character of paginatedCharacters; track character.id) {
+        <app-character-card [character]="character" />
+      }
+    </div>
+
+    <!-- Paginación -->
+    <app-pagination
+      [totalItems]="filteredCharacters().length"
+      [itemsPerPage]="itemsPerPage"
+      [currentPage]="currentPage()"
+      (pageChange)="onPageChange($event)">
+    </app-pagination>
+
+    <!-- No Results Message -->
+    @if (characterSummaries().length === 0 && !isLoading()) {
+      <div class="text-center py-12">
+        <div class="text-gray-400 text-6xl mb-4">⚔️</div>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">
+          No se encontraron personajes
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400">
+          @if (searchQuery()) {
+            Intenta ajustar tus criterios de búsqueda
+          } @else {
+            No hay personajes para mostrar en este momento
+          }
+        </p>
+      </div>
+    }
+  }
+</div>

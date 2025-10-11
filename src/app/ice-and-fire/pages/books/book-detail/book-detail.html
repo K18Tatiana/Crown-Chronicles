@@ -1,0 +1,189 @@
+<div class="space-y-6">
+  @if (isLoading()) {
+    <app-loading-spinner
+      size="lg"
+      message="Cargando detalles del libro..."
+    />
+  }
+
+  @if (error() && !isLoading()) {
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+      <h3 class="text-lg font-medium text-red-900 dark:text-red-300 mb-2">
+        {{ error() }}
+      </h3>
+    </div>
+  }
+
+  @if (book() && !isLoading()) {
+    <div class="space-y-6">
+      <!-- Información principal del libro -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-got font-bold text-gray-900 dark:text-white mb-4">
+            {{ book()!.name }}
+          </h1>
+          <div class="flex justify-center items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <span class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-3 py-1 rounded">
+              ISBN: {{ book()!.isbn }}
+            </span>
+            <span class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded">
+              {{ formatPages(book()!.numberOfPages) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Información detallada -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Información del Libro</h3>
+            <div class="space-y-4">
+              <div>
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">Autor(es):</span>
+                <p class="text-gray-900 dark:text-white">
+                  {{ book()!.authors.join(', ') }}
+                </p>
+              </div>
+
+              <div>
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">Fecha de Publicación:</span>
+                <p class="text-gray-900 dark:text-white">
+                  {{ formatDate(book()!.released) }}
+                </p>
+              </div>
+
+              <div>
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">Editor(es):</span>
+                <p class="text-gray-900 dark:text-white">
+                  {{ book()!.publisher || 'No especificado' }}
+                </p>
+              </div>
+
+              <div>
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">País:</span>
+                <p class="text-gray-900 dark:text-white">
+                  {{ book()!.country || 'No especificado' }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Estadísticas</h3>
+            <div class="space-y-4">
+              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-600 dark:text-gray-400 block">Personajes:</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-500">Total que aparecen</span>
+                  </div>
+                  <span class="text-2xl font-bold text-red-600 dark:text-red-400">
+                    {{ book()!.characters.length || 0 }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-600 dark:text-gray-400 block">POV Characters:</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-500">Narradores principales</span>
+                  </div>
+                  <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {{ book()!.povCharacters.length || 0 }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-600 dark:text-gray-400 block">Tipo de Medio:</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-500">Formato de publicación</span>
+                  </div>
+                  <span class="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {{ book()!.mediaType || 'Libro' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personajes del libro -->
+      @if (characters().length > 0) {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Personajes en este Libro ({{ characters().length }})
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (character of paginatedCharacters; track character.url) {
+              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors h-full flex flex-col">
+                <div class="flex items-start justify-between mb-2">
+                  <h4 class="font-semibold text-gray-900 dark:text-white">
+                    {{ character.name || character.aliases[0] || 'Personaje Desconocido' }}
+                  </h4>
+                  @if (character.died) {
+                    <span class="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded">
+                      Fallecido
+                    </span>
+                  } @else {
+                    <span class="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
+                      Vivo
+                    </span>
+                  }
+                </div>
+
+                <div class="space-y-1 text-sm text-gray-600 dark:text-gray-400 flex-1">
+                  <p>
+                    <span class="font-medium">Género:</span> {{ character.gender || 'Desconocido' }}
+                  </p>
+                  <p>
+                    <span class="font-medium">Cultura:</span> {{ character.culture || 'Desconocido' }}
+                  </p>
+                  <p>
+                    <span class="font-medium">Casa:</span> {{ getCharacterHouse(character) }}
+                  </p>
+                  @if (character.titles && character.titles.length > 0) {
+                    <p>
+                      <span class="font-medium">Títulos:</span> {{ character.titles[0] }}
+                    </p>
+                  }
+                </div>
+
+                <div class="mt-auto pt-3">
+                  <a
+                    [routerLink]="['/characters', character.url.split('/').pop()]"
+                    class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm font-medium">
+                    Ver Detalles →
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Paginación -->
+          <app-pagination
+            [totalItems]="characters().length"
+            [itemsPerPage]="itemsPerPage"
+            [currentPage]="currentPage()"
+            (pageChange)="onPageChange($event)">
+          </app-pagination>
+        </div>
+      } @else {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
+          <div class="text-6xl mb-4">👥</div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            Sin información de personajes
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400">
+            No hay información disponible sobre los personajes de este libro
+          </p>
+        </div>
+      }
+    </div>
+  }
+</div>

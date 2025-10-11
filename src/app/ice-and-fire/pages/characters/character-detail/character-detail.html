@@ -1,0 +1,219 @@
+<div class="space-y-6">
+  @if (isLoading()) {
+    <app-loading-spinner
+      size="lg"
+      message="Cargando detalles del personaje..."
+    />
+  }
+
+  @if (error() && !isLoading()) {
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+      <h3 class="text-lg font-medium text-red-900 dark:text-red-300 mb-2">
+        {{ error() }}
+      </h3>
+    </div>
+  }
+
+  @if (character() && !isLoading()) {
+    <div class="space-y-6">
+      <!-- Información básica del personaje -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h1 class="text-4xl font-got font-bold text-gray-900 dark:text-white mb-2">
+              {{ character()!.name || character()!.aliases[0] || 'Personaje Desconocido' }}
+            </h1>
+            @if (character()!.aliases && character()!.aliases.length > 0 && character()!.aliases[0] !== character()!.name) {
+              <p class="text-lg text-gray-600 dark:text-gray-400 italic">
+                También conocido como: {{ character()!.aliases.join(', ') }}
+              </p>
+            }
+          </div>
+        </div>
+
+        <!-- Detalles del personaje -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Información Básica</h3>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">Género:</span>
+                <span class="text-gray-900 dark:text-white">{{ character()!.gender || 'Desconocido' }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">Cultura:</span>
+                <span class="text-gray-900 dark:text-white">{{ character()!.culture || 'Desconocido' }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">Estado:</span>
+                <span class="text-gray-900 dark:text-white">
+                  {{ character()!.died ? 'Fallecido' : 'Vivo' }}
+                </span>
+              </div>
+              @if (character()!.died) {
+                <div class="flex justify-between">
+                  <span class="text-gray-600 dark:text-gray-400">Fecha de muerte:</span>
+                  <span class="text-gray-900 dark:text-white">{{ character()!.died }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Títulos y Posiciones</h3>
+            @if (character()!.titles && character()!.titles.length > 0) {
+              <div class="space-y-1">
+                @for (title of character()!.titles; track title) {
+                  <div class="text-gray-900 dark:text-white text-sm">
+                    {{ title }}
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="text-gray-500 dark:text-gray-400">Sin títulos conocidos</p>
+            }
+          </div>
+        </div>
+
+        <!-- Relaciones familiares -->
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Relaciones Familiares</h3>
+          @if (character()!.father || character()!.mother || character()!.spouse) {
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              @if (character()!.father) {
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded">
+                  <span class="text-sm text-gray-600 dark:text-gray-400">Padre:</span>
+                  <p class="text-gray-900 dark:text-white font-medium">
+                    @if (father()) {
+                      {{ father()!.name || 'Nombre desconocido' }}
+                      <a [routerLink]="['/characters', character()!.father.split('/').pop()]"
+                        class="text-got-red hover:underline ml-2">
+                        (Ver detalles)
+                      </a>
+                    } @else {
+                      <a [routerLink]="['/characters', character()!.father.split('/').pop()]"
+                        class="text-got-red hover:underline">
+                        Ver Padre
+                      </a>
+                    }
+                  </p>
+                </div>
+              }
+              @if (character()!.mother) {
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded">
+                  <span class="text-sm text-gray-600 dark:text-gray-400">Madre:</span>
+                  <p class="text-gray-900 dark:text-white font-medium">
+                    @if (mother()) {
+                      {{ mother()!.name || 'Nombre desconocido' }}
+                      <a [routerLink]="['/characters', character()!.mother.split('/').pop()]"
+                        class="text-got-red hover:underline ml-2">
+                        (Ver detalles)
+                      </a>
+                    } @else {
+                      <a [routerLink]="['/characters', character()!.mother.split('/').pop()]"
+                        class="text-got-red hover:underline">
+                        Ver Madre
+                      </a>
+                    }
+                  </p>
+                </div>
+              }
+              @if (character()!.spouse) {
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded">
+                  <span class="text-sm text-gray-600 dark:text-gray-400">Cónyuge:</span>
+                  <p class="text-gray-900 dark:text-white font-medium">
+                    @if (spouse()) {
+                      {{ spouse()!.name || 'Nombre desconocido' }}
+                      <a [routerLink]="['/characters', character()!.spouse.split('/').pop()]"
+                        class="text-got-red hover:underline ml-2">
+                        (Ver detalles)
+                      </a>
+                    } @else {
+                      <a [routerLink]="['/characters', character()!.spouse.split('/').pop()]"
+                        class="text-got-red hover:underline">
+                        Ver Cónyuge
+                      </a>
+                    }
+                  </p>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
+              <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              <p class="text-gray-600 dark:text-gray-400 font-medium">
+                No se conocen relaciones familiares para este personaje
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                Los datos familiares no están disponibles en la base de datos
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- Libros donde aparece el personaje -->
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Libros donde aparece</h3>
+          @if (isLoadingBooks()) {
+            <div class="flex justify-center py-8">
+              <app-loading-spinner size="md" message="Cargando libros..." />
+            </div>
+          } @else if (characterBooks().length > 0) {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              @for (book of characterBooks(); track book.url) {
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg h-full flex flex-col">
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-gray-900 dark:text-white mb-2">{{ book.name }}</h4>
+                    @if (book.authors && book.authors.length > 0) {
+                      <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        <span class="font-medium">Autor:</span> {{ book.authors.join(', ') }}
+                      </p>
+                    }
+                    @if (book.released) {
+                      <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        <span class="font-medium">Publicado:</span> {{ book.released }}
+                      </p>
+                    }
+                    <div class="flex flex-wrap gap-2 mb-3">
+                      @if (book.characters && book.characters.includes(character()!.url)) {
+                        <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded">
+                          Personaje
+                        </span>
+                      }
+                      @if (book.povCharacters && book.povCharacters.includes(character()!.url)) {
+                        <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded">
+                          Narrador POV
+                        </span>
+                      }
+                    </div>
+                  </div>
+                  <div class="mt-auto">
+                    <a [routerLink]="['/books', extractIdFromUrl(book.url)]"
+                      class="inline-block w-full text-center bg-got-red text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200">
+                      Ver detalles del libro
+                    </a>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
+              <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+              <p class="text-gray-600 dark:text-gray-400 font-medium">
+                No se encontraron libros para este personaje
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                Los datos de libros no están disponibles en la base de datos
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  }
+</div>
