@@ -1,277 +1,158 @@
-# Crown Chronicles - Explorador Interactivo de Juego de Tronos
+# Crown Chronicles
 
-Una aplicación web que proporciona una interfaz interactiva para explorar el mundo de Juego de Tronos utilizando la fuente de datos "An API of Ice and Fire". Construida con Angular 20.
+Angular app to explore Game of Thrones books, houses and characters using a public API.
 
-## Descripción General
+Aplicación web en Angular para explorar el universo de *Canción de Hielo y Fuego*: casas, personajes y libros, con datos de [An API of Ice and Fire](https://anapioficeandfire.com).
 
-Crown Chronicles es una aplicación web integral que permite a los usuarios explorar el rico universo de la serie "A Song of Ice And Fire" de George R.R. Martin. La aplicación proporciona información detallada sobre casas, personajes y libros de la serie, con características interactivas para descubrir relaciones y linajes familiares.
+![Casas](docs/screenshots/01-houses.png)
+
+## Contenido
+
+- [Contexto del proyecto](#contexto-del-proyecto)
+- [Características](#características)
+- [Capturas](#capturas)
+- [Uso](#uso)
+- [Inicio rápido](#inicio-rápido)
+- [Scripts disponibles](#scripts-disponibles)
+- [Limitaciones conocidas](#limitaciones-conocidas)
+- [Arquitectura](#arquitectura)
+- [Configuración](#configuración)
+- [Estructura del repositorio](#estructura-del-repositorio)
+
+## Contexto del proyecto
+
+Proyecto académico de la especialización en Desarrollo de Software II. Es una aplicación de una sola página (SPA) que solo consume una API pública; no tiene backend propio ni base de datos.
 
 ## Características
 
 ### Casas
-- **Listados Completos de Casas**: Navega por todas las casas nobles de Westeros
-- **Información Detallada de Casas**: Ve escudos de armas, lemas, regiones y detalles de fundación
-- **Miembros de las Casas**: Explora vasallos y sus relaciones
-- **Sistema de Favoritos**: Marca casas como favoritas con almacenamiento persistente
-- **Filtro de Favoritos**: Filtra para mostrar solo casas marcadas como favoritas
-- **Búsqueda Avanzada**: Encuentra casas por nombre, región o lema
-- **Información del Fundador**: Ve detalles del fundador de cada casa
+- Listado con lema, región, número de miembros y escudo de armas, con búsqueda por nombre, región o lema.
+- Detalle con fundador (con enlace a su ficha), títulos, asientos y vasallos (miembros de la casa).
+- **Favoritos**: se marcan con la estrella, se guardan en el `localStorage` del navegador y se filtran con el botón "Todas las Casas". El filtro se combina con la búsqueda.
 
 ### Personajes
-- **Base de Datos de Personajes**: Accede a información detallada de personajes
-- **Relaciones Familiares**: Ve información de padre, madre y cónyuge con enlaces directos
-- **Detalles de Personajes**: Género, cultura, títulos, lealtades y más
-- **Funcionalidad de Búsqueda**: Encuentra personajes por nombre, cultura o títulos
-- **Información Familiar Completa**: Nombres de familiares junto con enlaces de "Ver Detalles"
+- Listado con búsqueda por nombre, cultura o título.
+- Detalle con alias, género, cultura, estado, títulos y relaciones familiares (padre, madre y cónyuge) con enlace a cada ficha, cuando la API tiene el dato.
+- Libros donde aparece el personaje, indicando si es narrador (POV).
 
 ### Libros
-- **Colección de Libros**: Información sobre todos los libros de la serie
-- **Apariciones de Personajes**: Ve qué personajes aparecen en qué libros
-- **Detalles de Publicación**: Autores, fechas de lanzamiento y número de páginas
-- **Libros por Personaje**: En la página de detalles de personajes, ve todos los libros donde aparece cada personaje
-- **Distinción POV**: Identifica si un personaje es narrador principal (POV) o solo aparece en el libro
+- Listado con búsqueda por título, autor o ISBN.
+- Detalle con autor, fecha, editorial, país, formato, número de personajes y narradores (POV), y la lista de personajes del libro.
 
-
-### Experiencia de Usuario
-- **Modo Oscuro Fijo**: Interfaz en tema oscuro optimizada para la experiencia visual
-- **Diseño Responsivo**: Optimizado para escritorio, tablet y móvil
-- **Temática de Juego de Tronos**: Estilos personalizados inspirados en la serie
-- **Animaciones Suaves**: Transiciones envolventes y efectos de hover
-- **Almacenamiento Local**: Favoritos persistentes en el navegador
-- **Interfaz en Español**: Toda la interfaz completamente traducida al español
-
-## Stack Tecnológico
-
-- **Framework**: Angular 20 con componentes independientes
-- **Estilos**: Tailwind CSS con tema personalizado de Juego de Tronos
-- **Gestión de Estado**: Angular Signals para estado reactivo
-- **Cliente HTTP**: Cliente HTTP de Angular con caché
-- **Enrutamiento**: Router de Angular con carga diferida
-- **TypeScript**: Tipado estricto en toda la aplicación
-- **Arquitectura**: Arquitectura basada en componentes con separación clara de responsabilidades
-- **Diseño y UX**: Interfaz, colores, diseño responsivo y experiencia de usuario desarrollados con asistencia de IA
-
-## Descripción de la Arquitectura
-
-La aplicación sigue una **arquitectura dirigida por dominio** con separación clara de responsabilidades, organizada alrededor del dominio de la **API Ice and Fire**:
-
-### **Organización del Dominio** (`src/app/ice-and-fire/`)
-- **Propósito**: Contiene toda la funcionalidad relacionada con el universo de Juego de Tronos
-- **Estructura**: Organizada por dominio (relacionado con API)
-
-### **Páginas** (`src/app/ice-and-fire/pages/`)
-- **Propósito**: Contienen lógica a nivel de página y orquestan componentes
-- **Responsabilidad**: Manejan enrutamiento, obtención de datos y estado específico de página
-- **Ejemplos**: `houses`, `house-detail`, `characters`, `character-detail`
-
-### **Componentes** (`src/app/ice-and-fire/components/`)
-- **Propósito**: Componentes de UI reutilizables con responsabilidades únicas
-- **Responsabilidad**: Manejan interacciones específicas de UI y lógica de visualización
-- **Ejemplos**: `house-card`, `character-card`, `search-bar`, `loading-spinner`, `favorite-button`
-
-### **Servicios** (`src/app/ice-and-fire/services/`)
-- **Servicios API**: Comunicación con la API Ice and Fire
-- **Mapeadores**: Utilidades de transformación de datos
-- **Lógica de Negocio**: Operaciones específicas del dominio
-
-### **Interfaces** (`src/app/ice-and-fire/interfaces/`)
-- **Definiciones TypeScript**: Tipado fuerte para todas las entidades del dominio
-- **Contratos API**: Definiciones de interfaz para respuestas de API externas
-- **Modelos de Dominio**: Definiciones de entidades de negocio
-
-### **Beneficios de Esta Arquitectura**
-- **Enfoque en el Dominio**: Toda la funcionalidad relacionada está agrupada
-- **Reutilización**: Los componentes pueden usarse en múltiples páginas dentro del dominio
-- **Mantenibilidad**: Límites de dominio claros hacen el código más fácil de mantener
-- **Escalabilidad**: Fácil agregar nuevas características dentro del dominio o crear nuevos dominios
-- **Responsabilidad Única**: Cada componente tiene un propósito claro
-
-## Conceptos Técnicos Implementados
-
-### Patrones de Diseño y Arquitectura
-- **Observer Pattern**: Implementado a través de Angular Signals y RxJS Observables para manejo reactivo de estado y comunicación entre componentes
-- **Repository Pattern**: Servicios que actúan como repositorios para la gestión de datos de la API
-- **Mapper Pattern**: Transformación de datos entre capas (API ↔ Dominio ↔ UI) para mantener separación de responsabilidades
-
-### Gestión de Estado y Datos
-- **Angular Signals**: Estado reactivo moderno para actualizaciones automáticas de la UI
-- **LocalStorage**: Persistencia de favoritos del usuario en el navegador
-- **Sistema de Caché**: Cache inteligente con timeout configurable para optimizar peticiones HTTP
-- **Paginación**: Sistema de paginación reutilizable con algoritmo inteligente para mostrar páginas relevantes
-
-### Optimización y Performance
-- **Lazy Loading**: Carga diferida de componentes para mejorar el rendimiento inicial
-- **Caché HTTP**: Reducción de peticiones redundantes a la API
-- **Componentes Reutilizables**: Arquitectura modular que permite reutilización de código
-- **Computed Properties**: Cálculos automáticos y optimizados basados en signals
-
-### Desarrollo Asistido por IA
-- **Diseño de Interfaz**: Colores, tipografía y layout desarrollados con asistencia de IA
-- **Responsive Design**: Breakpoints y adaptabilidad móvil optimizados con IA
-- **UX/UI Patterns**: Implementación de mejores prácticas de experiencia de usuario
-- **Optimización de Componentes**: Refactoring y mejora de código con asistencia de IA
-
-## Estructura del Proyecto
-
-```
-src/
-├── app/
-│   ├── ice-and-fire/              # Funcionalidad específica del dominio
-│   │   ├── pages/                 # Componentes de página
-│   │   │   ├── houses/            # Páginas de casas
-│   │   │   │   ├── houses.ts
-│   │   │   │   ├── houses.html
-│   │   │   │   └── house-detail/  # Subcarpeta para detalles
-│   │   │   │       ├── house-detail.ts
-│   │   │   │       └── house-detail.html
-│   │   │   ├── characters/        # Páginas de personajes
-│   │   │   │   ├── characters.ts
-│   │   │   │   ├── characters.html
-│   │   │   │   └── character-detail/  # Subcarpeta para detalles
-│   │   │   │       ├── character-detail.ts
-│   │   │   │       └── character-detail.html
-│   │   │   └── books/             # Páginas de libros
-│   │   │       ├── books.ts
-│   │   │       ├── books.html
-│   │   │       └── book-detail/   # Subcarpeta para detalles
-│   │   │           ├── book-detail.ts
-│   │   │           └── book-detail.html
-│   │   ├── components/            # Componentes reutilizables
-│   │   │   ├── house-card/        # Componente tarjeta de casa
-│   │   │   │   ├── house-card.ts
-│   │   │   │   └── house-card.html
-│   │   │   ├── character-card/    # Componente tarjeta de personaje
-│   │   │   │   ├── character-card.ts
-│   │   │   │   └── character-card.html
-│   │   │   ├── search-bar/        # Componente barra de búsqueda
-│   │   │   │   ├── search-bar.ts
-│   │   │   │   └── search-bar.html
-│   │   │   ├── loading-spinner/   # Componente spinner de carga
-│   │   │   │   ├── loading-spinner.ts
-│   │   │   │   └── loading-spinner.html
-│   │   │   ├── favorite-button/   # Componente botón favorito
-│   │   │   │   ├── favorite-button.ts
-│   │   │   │   └── favorite-button.html
-│   │   │   └── pagination/        # Componente paginación reutilizable
-│   │   │       ├── pagination.ts
-│   │   │       └── pagination.html
-│   │   ├── services/              # Servicios API y lógica de negocio
-│   │   │   ├── house.service.ts
-│   │   │   ├── character.service.ts
-│   │   │   ├── book.service.ts
-│   │   │   └── mapper/            # Transformación de datos
-│   │   │       ├── house.mapper.ts
-│   │   │       ├── character.mapper.ts
-│   │   │       └── book.mapper.ts
-│   │   └── interfaces/            # Interfaces TypeScript
-│   │       ├── house.interfaces.ts
-│   │       ├── character.interfaces.ts
-│   │       ├── book.interfaces.ts
-│   │       └── api-response.interfaces.ts
-│   ├── environments/             # Configuración del entorno
-│   ├── app.config.ts             # Configuración de la aplicación
-│   ├── app.routes.ts             # Configuración de rutas
-│   ├── app.html                  # Plantilla principal de la aplicación
-│   └── app.ts                    # Componente principal de la aplicación
-└── styles.css                    # Estilos globales
-```
-
-## Para comenzar
-
-### Prerrequisitos
-
-- Node.js (versión 18 o superior)
-- npm (versión 9 o superior)
-- Angular CLI (versión 20 o superior)
-
-### Instalación
-
-1. **Clona el repositorio**
-  ```bash
-  git clone <url-del-repositorio>
-  cd crown-chronicles
-  ```
-
-2. **Instala las dependencias**
-  ```bash
-  npm install
-  ```
-
-3. **Inicia el servidor de desarrollo**
-  ```bash
-  ng serve
-  ```
-
-4. **Abre tu navegador**
-  Navega a `http://localhost:4200` para ver la aplicación.
-
-### Construir para Producción
-
-```bash
-npm run build
-```
-
-Los artefactos de construcción se almacenarán en el directorio `dist/`.
+### General
+- Paginación en los listados de casas y personajes, y en los personajes de cada libro.
+- Caché en memoria de las respuestas de la API (5 minutos en desarrollo, 10 en producción).
+- Tema oscuro fijo (la aplicación agrega la clase `dark` al arrancar) e interfaz en español.
+- Las cuadrículas usan puntos de quiebre de Tailwind (`md`, `lg`); no he probado la aplicación en móvil.
+- La interfaz y el diseño se desarrollaron con asistencia de IA.
 
 ## Uso
 
-### Explorando Casas
-1. Navega a la sección "Casas" desde la navegación principal
-2. Explora la lista de casas nobles
-3. Usa la funcionalidad de búsqueda para encontrar casas específicas
-4. Haz clic en el botón de corazón para filtrar solo casas favoritas
-5. Haz clic en cualquier casa para ver información detallada
-6. Usa el ícono de estrella para agregar casas a tus favoritos
-7. Usa la paginación para navegar entre múltiples páginas de resultados
+1. **Casas** (`/#/houses`): busca por nombre, región o lema; usa la estrella para marcar favoritas y "Todas las Casas" para filtrar solo las favoritas; haz clic en una casa para ver su detalle.
+2. **Personajes** (`/#/characters`): busca por nombre, cultura o título y abre la ficha de un personaje para ver sus relaciones familiares y los libros donde aparece.
+3. **Libros** (`/#/books`): busca por título, autor o ISBN y abre un libro para ver sus personajes.
 
-### Viendo Personajes
-1. Ve a la sección "Personajes"
-2. Busca personajes por nombre, cultura o títulos
-3. Haz clic en cualquier personaje para ver su información detallada
-4. Explora relaciones familiares (padre, madre, cónyuge) con nombres y enlaces directos
-5. En la página de detalles, ve todos los libros donde aparece el personaje
-6. Usa la paginación para navegar entre múltiples páginas de resultados
+## Capturas
 
-### Usando Favoritos
-- Haz clic en el ícono de estrella (⭐) en cualquier casa para agregarla a favoritos
-- Los favoritos se guardan automáticamente en el almacenamiento local de tu navegador
-- Usa el botón de filtro de favoritos para ver solo tus casas favoritas
-- Combina el filtro de favoritos con la búsqueda por texto
+| Casas | Detalle de una casa |
+|---|---|
+| ![Casas](docs/screenshots/01-houses.png) | ![Detalle de casa](docs/screenshots/02-house-detail.png) |
+
+| Personajes | Detalle de un personaje |
+|---|---|
+| ![Personajes](docs/screenshots/03-characters.png) | ![Detalle de personaje](docs/screenshots/04-character-detail.png) |
+
+| Libros | Detalle de un libro |
+|---|---|
+| ![Libros](docs/screenshots/05-books.png) | ![Detalle de libro](docs/screenshots/06-book-detail.png) |
+
+## Inicio rápido
+
+Requisitos: [Node.js](https://nodejs.org/) compatible con Angular 20 (v20.19+ o v22.12+) y conexión a internet, porque los datos vienen de la API pública.
+
+```bash
+git clone https://github.com/K18Tatiana/Crown-Chronicles.git
+cd Crown-Chronicles
+npm install
+npm start
+```
+
+Después abre **http://localhost:4200**.
+
+> La página de **Personajes** descarga todos los personajes de la API en peticiones de 12 en 12, así que puede tardar unos segundos en mostrar las tarjetas. La búsqueda y la paginación se hacen en el navegador, sobre los datos ya descargados.
+
+## Limitaciones conocidas
+
+- **Las pruebas actuales fallan.** El proyecto solo tiene `src/app/app.spec.ts`, generado por la plantilla de Angular: sus 2 pruebas fallan (falta el proveedor de `ActivatedRoute` y esperan un `<h1>` "Hello, CrownChronicles" que la aplicación no tiene). No hay pruebas de servicios ni de componentes, ni integración continua.
+- Dependen de la disponibilidad de la API pública: si no responde, los listados quedan vacíos.
+- Los datos de la API están incompletos en muchos casos (por ejemplo, varias casas sin lema o con 0 miembros, y personajes sin relaciones familiares); la interfaz muestra "Sin lema", "Desconocido" o un mensaje de que no hay datos.
+- Los nombres de casas y personajes, y los datos de la API, están en inglés; la interfaz está en español.
+- `d3` figura como dependencia, pero el código actual no lo utiliza.
+- **El tema personalizado no está definido.** Las plantillas usan clases como `bg-got-red` y `font-got`, pero `src/styles.css` solo importa la fuente Cinzel y Tailwind, sin definirlas, así que esas clases no tienen efecto: no hay acentos rojos ni dorados en la navegación y la fuente Cinzel no se aplica. Además, los subtítulos de cada página (gris oscuro sobre fondo oscuro) se leen con dificultad.
+
+## Scripts disponibles
+
+| Comando | Descripción |
+|---|---|
+| `npm start` | Servidor de desarrollo con recarga (`ng serve`) en el puerto 4200 |
+| `npm run build` | Compila la aplicación a `dist/` |
+| `npm run watch` | Compilación continua en modo desarrollo |
+| `npm test` | Pruebas con Karma y Jasmine (requiere Chrome). Actualmente fallan, ver [Limitaciones conocidas](#limitaciones-conocidas) |
+
+## Arquitectura
+
+```
+┌──────────────────────────────┐   HTTP    ┌──────────────────────────┐
+│   Angular 20 (SPA, :4200)    │ ────────► │  An API of Ice and Fire  │
+│ Páginas → Servicios → Mappers│           │ anapioficeandfire.com    │
+└──────────────┬───────────────┘           └──────────────────────────┘
+               │
+        localStorage (favoritos)
+```
+
+| Capa | Descripción |
+|---|---|
+| `pages/` | Componentes de página (listados y detalles), cargados de forma diferida por ruta |
+| `components/` | Componentes reutilizables: tarjetas, búsqueda, paginación, favoritos y spinner |
+| `services/` | Acceso a la API con `HttpClient`, señales de Angular y caché en memoria |
+| `services/mapper/` | Transforman las respuestas de la API en los modelos de la aplicación |
+| `interfaces/` | Tipos de personajes, casas, libros y respuestas |
+
+| Tecnología | Uso |
+|---|---|
+| Angular 20 | Framework con componentes independientes (*standalone*), enrutamiento con carga diferida (*lazy loading*) y `HttpClient` |
+| Angular Signals + RxJS | Estado reactivo en los servicios y peticiones HTTP |
+| TypeScript | Modo estricto activado (`strict` y `strictTemplates`) |
+| Tailwind CSS 4 | Estilos |
+| Karma + Jasmine | Pruebas (ver [Limitaciones conocidas](#limitaciones-conocidas)) |
+
+Patrones usados: los servicios hacen de capa de acceso a datos y los *mappers* transforman las respuestas de la API en los modelos que usa la interfaz.
+
+Las rutas usan *hash* (`/#/houses`, `/#/characters`, `/#/books`) y cada listado tiene su detalle en `/:id`.
 
 ## Configuración
 
-### Variables de Entorno
+La URL de la API y los valores por defecto están en [`src/environments/environment.ts`](src/environments/environment.ts):
 
-La aplicación utiliza archivos de entorno para la configuración:
+| Variable | Valor por defecto | Descripción |
+|---|---|---|
+| `apiBaseUrl` | `https://anapioficeandfire.com` | URL base de la API |
+| `cacheTimeout` | `300000` | Duración de la caché en milisegundos (5 min). En `environment.prod.ts` es `600000` (10 min) |
+| `defaultPageSize` | `12` | Elementos por página |
 
-- `src/environments/environment.ts` - Configuración de desarrollo
-- `src/environments/environment.prod.ts` - Configuración de producción
+## Estructura del repositorio
 
-Opciones de configuración clave:
-- `apiBaseUrl`: URL base para la API "An API of Ice and Fire"
-- `cacheTimeout`: Duración del caché para respuestas de API
-- `defaultPageSize`: Número predeterminado de elementos por página
-- `companyName`: Nombre de la aplicación
-
-### Configuración de API
-
-La aplicación se conecta a "An API of Ice and Fire" en `https://anapioficeandfire.com`. No se requiere clave de API ya que esta es una API pública.
-
-## Temática
-
-La aplicación cuenta con un tema personalizado inspirado en Juego de Tronos:
-
-- **Colores**: 
-  - Rojo Primario (`#8B0000`) - Colores de casas y acentos
-  - Dorado (`#DAA520`) - Acentos secundarios y destacados
-  - Tema oscuro fijo con escalas de grises personalizadas
-
-- **Tipografía**: 
-  - Familia de fuentes Cinzel para encabezados (estética de Juego de Tronos)
-  - Fuentes del sistema para texto del cuerpo
-
-- **Componentes**: 
-  - Diseños de tarjetas personalizados con efectos hover
-  - Botones y elementos de formulario temáticos
-  - Transiciones y animaciones suaves
-  - Cards de altura uniforme para mejor organización visual
+```
+CrownChronicles/
+├── docs/screenshots/        # Capturas usadas en este README
+├── public/                  # Recursos estáticos
+└── src/
+    ├── environments/        # Configuración de desarrollo y producción
+    └── app/
+        ├── app.routes.ts    # Rutas de la aplicación
+        └── ice-and-fire/
+            ├── pages/       # houses, characters y books (listado y detalle)
+            ├── components/  # book-card, character-card, house-card, search-bar...
+            ├── services/    # book, character y house (+ mappers)
+            └── interfaces/  # Modelos y tipos
+```
