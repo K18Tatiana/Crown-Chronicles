@@ -2,6 +2,8 @@
 
 Angular app to explore Game of Thrones books, houses and characters using a public API.
 
+**Demo:** https://k18tatiana.github.io/Crown-Chronicles/
+
 Aplicación web en Angular para explorar el universo de *Canción de Hielo y Fuego*: casas, personajes y libros, con datos de [An API of Ice and Fire](https://anapioficeandfire.com).
 
 ![Casas](docs/screenshots/01-houses.png)
