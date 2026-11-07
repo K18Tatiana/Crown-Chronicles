@@ -85,7 +85,8 @@ Después abre **http://localhost:4200**.
 
 ## Limitaciones conocidas
 
-- **Las pruebas actuales fallan.** El proyecto solo tiene `src/app/app.spec.ts`, generado por la plantilla de Angular: sus 2 pruebas fallan (falta el proveedor de `ActivatedRoute` y esperan un `<h1>` "Hello, CrownChronicles" que la aplicación no tiene). No hay pruebas de servicios ni de componentes, ni integración continua.
+- **Cobertura de pruebas mínima.** Solo existe `src/app/app.spec.ts` (3 pruebas del componente raíz: que se crea, que muestra el nombre y que enlaza a Casas, Personajes y Libros). No hay pruebas de servicios, mappers ni de las páginas.
+- **El workflow de GitHub Actions solo despliega la demo**: no ejecuta las pruebas.
 - Dependen de la disponibilidad de la API pública: si no responde, los listados quedan vacíos.
 - Los datos de la API están incompletos en muchos casos (por ejemplo, varias casas sin lema o con 0 miembros, y personajes sin relaciones familiares); la interfaz muestra "Sin lema", "Desconocido" o un mensaje de que no hay datos.
 - Los nombres de casas y personajes, y los datos de la API, están en inglés; la interfaz está en español.
@@ -99,7 +100,7 @@ Después abre **http://localhost:4200**.
 | `npm start` | Servidor de desarrollo con recarga (`ng serve`) en el puerto 4200 |
 | `npm run build` | Compila la aplicación a `dist/` |
 | `npm run watch` | Compilación continua en modo desarrollo |
-| `npm test` | Pruebas con Karma y Jasmine (requiere Chrome). Actualmente fallan, ver [Limitaciones conocidas](#limitaciones-conocidas) |
+| `npm test` | Pruebas con Karma y Jasmine (requiere Chrome). Para ejecutarlas una sola vez: `npx ng test --watch=false --browsers=ChromeHeadless` |
 
 ## Arquitectura
 
