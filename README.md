@@ -11,6 +11,7 @@ Aplicación web en Angular para explorar el universo de *Canción de Hielo y Fue
 - [Contexto del proyecto](#contexto-del-proyecto)
 - [Características](#características)
 - [Capturas](#capturas)
+- [Uso](#uso)
 - [Inicio rápido](#inicio-rápido)
 - [Scripts disponibles](#scripts-disponibles)
 - [Limitaciones conocidas](#limitaciones-conocidas)
@@ -24,12 +25,32 @@ Proyecto académico de la especialización en Desarrollo de Software II. Es una 
 
 ## Características
 
-- **Casas**: listado con lema, región, número de miembros y escudo de armas; detalle con fundador, títulos y vasallos (miembros de la casa).
-- **Personajes**: listado con búsqueda por nombre, cultura o título; detalle con alias, cultura, estado, títulos, relaciones familiares y libros donde aparece.
-- **Libros**: listado con búsqueda por título, autor o ISBN; detalle con estadísticas y los personajes del libro.
-- **Favoritos** solo en las casas: se marcan con la estrella, se filtran con el botón "Todas las Casas" y se guardan en el `localStorage` del navegador.
+### Casas
+- Listado con lema, región, número de miembros y escudo de armas, con búsqueda por nombre, región o lema.
+- Detalle con fundador (con enlace a su ficha), títulos, asientos y vasallos (miembros de la casa).
+- **Favoritos**: se marcan con la estrella, se guardan en el `localStorage` del navegador y se filtran con el botón "Todas las Casas". El filtro se combina con la búsqueda.
+
+### Personajes
+- Listado con búsqueda por nombre, cultura o título.
+- Detalle con alias, género, cultura, estado, títulos y relaciones familiares (padre, madre y cónyuge) con enlace a cada ficha, cuando la API tiene el dato.
+- Libros donde aparece el personaje, indicando si es narrador (POV).
+
+### Libros
+- Listado con búsqueda por título, autor o ISBN.
+- Detalle con autor, fecha, editorial, país, formato, número de personajes y narradores (POV), y la lista de personajes del libro.
+
+### General
 - Paginación en los listados de casas y personajes, y en los personajes de cada libro.
 - Caché en memoria de las respuestas de la API (5 minutos en desarrollo, 10 en producción).
+- Tema oscuro fijo (la aplicación agrega la clase `dark` al arrancar) e interfaz en español.
+- Las cuadrículas usan puntos de quiebre de Tailwind (`md`, `lg`); no he probado la aplicación en móvil.
+- La interfaz y el diseño se desarrollaron con asistencia de IA.
+
+## Uso
+
+1. **Casas** (`/#/houses`): busca por nombre, región o lema; usa la estrella para marcar favoritas y "Todas las Casas" para filtrar solo las favoritas; haz clic en una casa para ver su detalle.
+2. **Personajes** (`/#/characters`): busca por nombre, cultura o título y abre la ficha de un personaje para ver sus relaciones familiares y los libros donde aparece.
+3. **Libros** (`/#/books`): busca por título, autor o ISBN y abre un libro para ver sus personajes.
 
 ## Capturas
 
@@ -67,6 +88,7 @@ Después abre **http://localhost:4200**.
 - Los datos de la API están incompletos en muchos casos (por ejemplo, varias casas sin lema o con 0 miembros, y personajes sin relaciones familiares); la interfaz muestra "Sin lema", "Desconocido" o un mensaje de que no hay datos.
 - Los nombres de casas y personajes, y los datos de la API, están en inglés; la interfaz está en español.
 - `d3` figura como dependencia, pero el código actual no lo utiliza.
+- **El tema personalizado no está definido.** Las plantillas usan clases como `bg-got-red` y `font-got`, pero `src/styles.css` solo importa la fuente Cinzel y Tailwind, sin definirlas, así que esas clases no tienen efecto: no hay acentos rojos ni dorados en la navegación y la fuente Cinzel no se aplica. Además, los subtítulos de cada página (gris oscuro sobre fondo oscuro) se leen con dificultad.
 
 ## Scripts disponibles
 
@@ -98,10 +120,13 @@ Después abre **http://localhost:4200**.
 
 | Tecnología | Uso |
 |---|---|
-| Angular 20 | Framework, enrutamiento y `HttpClient` |
+| Angular 20 | Framework con componentes independientes (*standalone*), enrutamiento con carga diferida (*lazy loading*) y `HttpClient` |
+| Angular Signals + RxJS | Estado reactivo en los servicios y peticiones HTTP |
+| TypeScript | Modo estricto activado (`strict` y `strictTemplates`) |
 | Tailwind CSS 4 | Estilos |
-| RxJS | Peticiones y composición de flujos |
-| Karma + Jasmine | Pruebas unitarias |
+| Karma + Jasmine | Pruebas (ver [Limitaciones conocidas](#limitaciones-conocidas)) |
+
+Patrones usados: los servicios hacen de capa de acceso a datos y los *mappers* transforman las respuestas de la API en los modelos que usa la interfaz.
 
 Las rutas usan *hash* (`/#/houses`, `/#/characters`, `/#/books`) y cada listado tiene su detalle en `/:id`.
 
